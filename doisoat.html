@@ -16,23 +16,25 @@
             <p>Hiển thị kết quả từ Google Sheet / Apps Script</p>
         </div>
 
-        <button onclick="refreshData()">
-    Làm mới kết quả
-</button>
+        <button onclick="refreshData()">Làm mới kết quả</button>
     </header>
 
     <section class="filter-box">
         <div>
-            <label>Từ ngày</label>
-            <input type="date" id="fromDate" onchange="applyFilter()">
+            <label>Tháng</label>
+            <input type="month" id="monthFilter" onchange="changeMonth()">
         </div>
 
         <div>
-            <label>Đến ngày</label>
-            <input type="date" id="toDate" onchange="applyFilter()">
+            <label>Số dòng/trang</label>
+            <select id="limitSelect" onchange="changeLimit()">
+                <option value="50">50 dòng</option>
+                <option value="100" selected>100 dòng</option>
+                <option value="200">200 dòng</option>
+            </select>
         </div>
 
-        <button onclick="applyFilter()">Lọc dữ liệu</button>
+        <button onclick="refreshData()">Tải dữ liệu</button>
     </section>
 
     <section class="summary">
@@ -73,6 +75,12 @@
             <span id="statusText">Đang tải dữ liệu...</span>
         </div>
 
+        <div class="pager">
+            <button onclick="prevPage()">◀ Trang trước</button>
+            <span id="pageInfo">Trang 1 / 1</span>
+            <button onclick="nextPage()">Trang sau ▶</button>
+        </div>
+
         <div class="table-wrap">
             <table id="resultTable">
                 <thead>
@@ -92,7 +100,7 @@
 
                 <tfoot>
                     <tr>
-                        <td colspan="3">TỔNG CỘNG</td>
+                        <td colspan="3">TỔNG TRANG HIỆN TẠI</td>
                         <td id="totalFee">0</td>
                         <td id="totalBank">0</td>
                         <td id="totalInvoice">0</td>
@@ -105,6 +113,6 @@
 
 </div>
 
-<script src="doisoat.js"></script>
+<script src="doisoat.js?v=10"></script>
 </body>
 </html>
