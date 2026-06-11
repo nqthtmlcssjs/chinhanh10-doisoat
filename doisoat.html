@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đối soát thu phí</title>
+    <link rel="stylesheet" href="doisoat.css">
+</head>
+
+<body>
+<div class="page">
+
+    <header class="header">
+        <div>
+            <h1>Đối soát thu phí</h1>
+            <p>Hiển thị kết quả từ Google Sheet / Apps Script</p>
+        </div>
+
+        <button onclick="loadDataFromGoogleSheet()">
+            Làm mới kết quả
+        </button>
+    </header>
+
+    <section class="filter-box">
+        <div>
+            <label>Từ ngày</label>
+            <input type="date" id="fromDate" onchange="applyFilter()">
+        </div>
+
+        <div>
+            <label>Đến ngày</label>
+            <input type="date" id="toDate" onchange="applyFilter()">
+        </div>
+
+        <button onclick="applyFilter()">Lọc dữ liệu</button>
+    </section>
+
+    <section class="summary">
+        <div class="summary-card">
+            <span>Tổng hồ sơ</span>
+            <b id="tongHoSo">0</b>
+        </div>
+
+        <div class="summary-card success">
+            <span>Matched</span>
+            <b id="tongMatched">0</b>
+        </div>
+
+        <div class="summary-card danger">
+            <span>Needs Review</span>
+            <b id="tongReview">0</b>
+        </div>
+
+        <div class="summary-card">
+            <span>Tổng thu phí</span>
+            <b id="totalFeeBox">0</b>
+        </div>
+
+        <div class="summary-card">
+            <span>Tổng BIDV</span>
+            <b id="totalBankBox">0</b>
+        </div>
+
+        <div class="summary-card">
+            <span>Tổng Sinvoice</span>
+            <b id="totalInvoiceBox">0</b>
+        </div>
+    </section>
+
+    <section class="table-card">
+        <div class="table-title">
+            <h2>Kết quả đối soát</h2>
+            <span id="statusText">Đang tải dữ liệu...</span>
+        </div>
+
+        <div class="table-wrap">
+            <table id="resultTable">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Mã hồ sơ</th>
+                        <th>Ngày thanh toán</th>
+                        <th>Số tiền cán bộ thu phí</th>
+                        <th>Số tiền BIDV</th>
+                        <th>Số tiền Sinvoice</th>
+                        <th>Trạng thái</th>
+                        <th>Tham chiếu BIDV</th>
+                    </tr>
+                </thead>
+
+                <tbody></tbody>
+
+                <tfoot>
+                    <tr>
+                        <td colspan="3">TỔNG CỘNG</td>
+                        <td id="totalFee">0</td>
+                        <td id="totalBank">0</td>
+                        <td id="totalInvoice">0</td>
+                        <td colspan="2"></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </section>
+
+</div>
+
+<script src="doisoat.js"></script>
+</body>
+</html>
