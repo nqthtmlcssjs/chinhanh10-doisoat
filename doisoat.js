@@ -32,9 +32,57 @@ function parseMoney(value){
     ) || 0;
 }
 
-async function loadDataFromGoogleSheet(){
+/* ================= CACHE ================= */
+
+function saveCache(data){
+    localStorage.setItem("doisoat_cache", JSON.stringify(data));
+    localStorage.setItem("doisoat_cache_time", String(new Date().getTime()));
+}
+
+function loadCache(){
+    const cache = localStorage.getItem("doisoat_cache");
+
+    if(!cache) return false;
+
+    try{
+        resultData = JSON.parse(cache);
+        applyFilter();
+
+        document.getElementById("statusText").innerText =
+            "Hiển thị từ bộ nhớ đệm";
+
+        return true;
+    }catch(e){
+        return false;
+    }
+}
+
+function cacheExpired(){
+    const time = localStorage.getItem("doisoat_cache_time");
+
+    if(!time) return true;
+
+    const age = new Date().getTime() - Number(time);
+
+    // 30 phút tự tải lại dữ liệu
+    return age > 30 * 60 * 1000;
+}
+
+function clearCache(){
+    localStorage.removeItem("doisoat_cache");
+    localStorage.removeItem("doisoat_cache_time");
+}
+
+/* ================= LOAD DATA ================= */
+
+async function loadDataFromGoogleSheet(force = false){
     const status = document.getElementById("statusText");
-    status.innerText = "Đang tải dữ liệu...";
+
+    if(force){
+        clearCache();
+    }
+
+    status.innerText = "Đang tải dữ liệu từ Google Sheet...";
 
     try{
         const res = await fetch(API_URL);
@@ -56,15 +104,23 @@ async function loadDataFromGoogleSheet(){
                 ref: row["Tham chiếu BIDV"] || ""
             }));
 
+        saveCache(resultData);
         applyFilter();
-        status.innerText = "Đã tải dữ liệu thành công";
+
+        status.innerText = "Đã tải dữ liệu mới từ Google Sheet";
 
     }catch(error){
         console.error(error);
-        status.innerText = "Không tải được dữ liệu";
-        alert("Không tải được dữ liệu từ Google Sheet.");
+
+        status.innerText = "Không tải được dữ liệu từ Google Sheet";
+
+        if(!loadCache()){
+            alert("Không tải được dữ liệu từ Google Sheet.");
+        }
     }
 }
+
+/* ================= FILTER ================= */
 
 function applyFilter(){
     const fromDate = document.getElementById("fromDate").value;
@@ -82,6 +138,8 @@ function applyFilter(){
 
     renderTable(data);
 }
+
+/* ================= RENDER ================= */
 
 function renderTable(data){
     const tbody = document.querySelector("#resultTable tbody");
@@ -133,4 +191,19 @@ function renderTable(data){
     document.getElementById("totalInvoiceBox").innerText = formatMoney(totalInvoice);
 }
 
-loadDataFromGoogleSheet();
+/* ================= BUTTON ================= */
+
+// Nút Làm mới kết quả sẽ ép tải dữ liệu mới
+function refreshData(){
+    loadDataFromGoogleSheet(true);
+}
+
+/* ================= START ================= */
+
+if(loadCache()){
+    if(cacheExpired()){
+        loadDataFromGoogleSheet();
+    }
+}else{
+    loadDataFromGoogleSheet();
+}
